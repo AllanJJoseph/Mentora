@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import twilio from 'twilio';
 
+export const dynamic = 'force-dynamic';
+
 // The system requires Twilio and Resend API keys inside .env.local
 export async function POST(request: Request) {
   try {
