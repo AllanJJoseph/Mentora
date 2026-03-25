@@ -59,6 +59,12 @@ export default function VoiceInput({ onTranscript, language = "en-US" }: VoiceIn
     };
 
     recognition.onerror = (event: any) => {
+      // "aborted" fires naturally when recognition ends or restarts — safe to ignore
+      if (event.error === "aborted" || event.error === "no-speech") {
+        setIsListening(false);
+        setIsProcessing(false);
+        return;
+      }
       console.error("Speech recognition error:", event.error);
       setIsListening(false);
       setIsProcessing(false);
@@ -100,8 +106,8 @@ export default function VoiceInput({ onTranscript, language = "en-US" }: VoiceIn
         isListening
           ? "bg-red-500 hover:bg-red-600 border-red-500 text-white animate-pulse"
           : isProcessing
-          ? "bg-white/5 border-white/10 text-white/40 cursor-not-allowed"
-          : "bg-white/5 hover:bg-white/10 border-white/10 text-white hover:text-indigo-400"
+          ? "bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-400 dark:text-white/40 cursor-not-allowed"
+          : "bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border-gray-200 dark:border-white/10 text-gray-600 dark:text-white hover:text-indigo-500 dark:hover:text-indigo-400"
       }`}
       title={isListening ? "Stop recording" : "Start voice input"}
     >

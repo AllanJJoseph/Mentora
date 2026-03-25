@@ -11,9 +11,9 @@ export class MatchingService {
    * Calculates the match score between a mentor and a mentee.
    */
   static calculateScore(mentor: UserProfile, mentee: UserProfile): number {
-    const skillMatch = this.calculateSkillMatch(mentor.skills, mentee.interests);
+    const skillMatch = this.calculateSkillMatch(mentor.skills, mentee.skills);
     const languageMatch = mentor.language === mentee.language ? 100 : 0;
-    const locationMatch = mentor.location === mentee.location ? 100 : 50; // Proximity bonus
+    const locationMatch = mentor.location === mentee.location ? 100 : 0; // Strict location match
     const availabilityMatch = mentor.availability === mentee.availability ? 100 : 0;
 
     const totalScore = 
@@ -25,22 +25,29 @@ export class MatchingService {
     return Math.round(totalScore);
   }
 
-  private static calculateSkillMatch(mentorSkills: string[], menteeInterests: string[]): number {
-    if (!menteeInterests.length) return 0;
+  private static calculateSkillMatch(mentorSkills: string[], menteeSkills: string[]): number {
+    if (!menteeSkills.length) return 0;
     
+    // Check overlap where mentor has the skill the mentee is learning
     const intersection = mentorSkills.filter(skill => 
-      menteeInterests.some(interest => interest.toLowerCase() === skill.toLowerCase())
+      menteeSkills.some(menteeSkill => menteeSkill.toLowerCase() === skill.toLowerCase())
     );
     
-    return (intersection.length / menteeInterests.length) * 100;
+    return (intersection.length / menteeSkills.length) * 100;
   }
 
   /**
-   * Generates a match and gets an AI explanation.
+   * Generates a match with a personalized AI explanation using real profile data.
    */
   static async createMatch(mentor: UserProfile, mentee: UserProfile) {
     const score = this.calculateScore(mentor, mentee);
-    const explanation = await explainMatch(mentor.uid, mentee.uid, score);
+    
+    // Pass full profile data so both Gemini prompt and fallback are personalized
+    const explanation = await explainMatch(
+      { name: mentor.displayName, skills: mentor.skills, language: mentor.language || "", location: mentor.location || "" },
+      { name: mentee.displayName, skills: mentee.skills, language: mentee.language || "", location: mentee.location || "" },
+      score
+    );
     
     return {
       mentorId: mentor.uid,

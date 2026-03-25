@@ -27,7 +27,7 @@ export default function HealthBadge({ status, score }: HealthBadgeProps) {
   return (
     <div className={`inline-flex flex-col gap-2 p-4 rounded-lg border ${config.color}`}>
       <div className="flex justify-between items-center gap-4">
-        <span className="text-xs font-semibold tracking-wide uppercase">Engagement Health</span>
+        <span className="text-xs font-semibold tracking-wide uppercase">Engagement Analytics</span>
         <span className="text-sm font-bold">{score}%</span>
       </div>
       <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">

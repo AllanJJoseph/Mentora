@@ -26,6 +26,13 @@ export interface Match {
   streakCount: number;
   missedSessions: number;
   createdAt: Date;
+  
+  // Advanced Analytics (Phase 5)
+  sessionsAttended?: number;
+  testScores?: number[];
+  feedbackScore?: number;
+  assignmentConsistency?: number;
+  activityLevel?: 'High' | 'Moderate' | 'Low' | 'Idle';
 }
 
 export interface Session {

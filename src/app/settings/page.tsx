@@ -2,18 +2,22 @@
 
 import Navbar from "@/components/Navbar";
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useProfile } from "@/context/ProfileContext";
 import { User, Bell, Globe, Shield, Save, Check } from "lucide-react";
 
 export default function Settings() {
+  const { user } = useAuth();
+  const { profile } = useProfile();
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // Profile Settings
-  const [displayName, setDisplayName] = useState("Allan Joe");
-  const [email, setEmail] = useState("allan.joe@example.com");
-  const [bio, setBio] = useState("Aspiring developer passionate about React and TypeScript");
-  const [location, setLocation] = useState("Mumbai, India");
-  const [skills, setSkills] = useState(["React", "TypeScript", "Node.js"]);
-  const [interests, setInterests] = useState(["Web Development", "UI/UX", "System Design"]);
+  // Profile Settings — pre-filled from real profile data
+  const [displayName, setDisplayName] = useState(profile?.fullName || user?.displayName || "");
+  const [email, setEmail] = useState(profile?.email || user?.email || "");
+  const [bio, setBio] = useState(profile?.bio || "");
+  const [location, setLocation] = useState(profile?.location || "");
+  const [skills, setSkills] = useState(profile?.skills || []);
+  const [interests, setInterests] = useState(profile?.interests || []);
 
   // Notification Settings
   const [emailNotifications, setEmailNotifications] = useState(true);

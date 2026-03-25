@@ -1,36 +1,91 @@
-# Mentora - Project Context
+# Mentora - Comprehensive Project Context
 
-This file serves as a persistent context for Mentora, a platform designed to automate and enhance the mentorship lifecycle with AI-driven matching, engagement tracking, and session assistance.
-
-## Project Vision
-To build an AI-powered mentorship lifecycle platform that not only connects mentors and mentees but ensures consistent engagement, measurable growth, and scalable impact, specifically catering to underserved and rural communities (e.g., Agaram Foundation).
-
-## Tech Stack & Architecture
-- **Frontend**: [Next.js App Router](https://nextjs.org/) (TypeScript, [Tailwind CSS](https://tailwindcss.com/))
-- **Backend/DB**: [Firebase Firestore & Cloud Functions](https://firebase.google.com/)
-- **Authentication**: Firebase Auth (Role-based access: Mentor, Mentee, Admin)
-- **AI Intelligence Layer**: [Google Gemini API](https://deepmind.google/technologies/gemini/) (Automated matching explanations, session transcription, and action item generation)
-- **External Integrations**: [Twilio SMS](https://www.twilio.com/) (low-bandwidth offline nudges), Web Speech API (Voice-to-text), [Google Translate API](https://cloud.google.com/translate) (Cross-language bridge)
-
-## Target Personas
-1. **Mentee (Student)**: Needs structured learning but faces language and connectivity constraints.
-2. **Mentor (Volunteer)**: Needs easy scheduling and visibility into the mentee's progress without administrative burden.
-3. **Admin (NGO)**: Needs to monitor engagement, track outcomes, and intervene when matches are "At-Risk".
-
-## Core Systems & Features (With Local Links)
-1. **AI Smart Matching Engine** ([`/matching-demo`](http://localhost:3000/matching-demo)): A deterministic + AI hybrid scoring algorithm factoring in skills, language, location, and availability to output a Match Score and an AI-generated explanation.
-2. **Engagement Health Tracker** ([`/health-demo`](http://localhost:3000/health-demo)): A dynamic metric system categorizing relationships as Active (🟢), At-Risk (🟡), or Inactive (🔴) based on session frequency, duration, and streaks.
-3. **AI Session Assistant** ([`/session-demo`](http://localhost:3000/session-demo)): Converts unstructured session notes or voice inputs directly into structured summaries and action items.
-4. **Leaderboard & Gamification** ([`/leaderboard-demo`](http://localhost:3000/leaderboard-demo)): Behavioral engineering through Mentor and Mentee ranking formulas, streaks, and Badges (Top Mentor, Fast Learner) to drive week-over-week consistency.
-5. **Language Bridge & Voice** ([`/language-demo`](http://localhost:3000/language-demo)): Democratizing access by combining real-time translations with voice-to-text input, allowing a tech executive to seamlessly mentor a rural student in their native tongue.
-6. **Smart Nudging System** ([`/nudges`](http://localhost:3000/nudges)): Automated triggers (via App or SMS) to re-engage users when sessions are missed or inactivity is detected.
-7. **Admin Dashboard** ([`/admin`](http://localhost:3000/admin)): System-wide analytics for NGOs to monitor engagement.
-8. **Unified Dashboard Hub** ([`/dashboard`](http://localhost:3000/dashboard)): The central user portal tying all features together.
-
-## Important Links & Resources
-- **GitHub Repository**: [AllanJJoseph/Mentora](https://github.com/AllanJJoseph/Mentora.git)
-- **Main Landing Page**: [http://localhost:3000](http://localhost:3000)
-- **Platform Goal**: Automation, Transparency, Accessibility specifically for NGOs like Agaram Foundation.
+Mentora is an AI-powered mentorship lifecycle platform designed for the **Agaram Foundation** and similar NGOs. It automates matching, tracks engagement, and provides real-time AI assistance for students in underserved and rural communities.
 
 ---
-*Last Updated: 2026-03-25*
+
+## 🏗️ Technical Architecture & Core Stack
+- **Frontend Framework**: [Next.js 15+](https://nextjs.org/) (App Router, React 18, TypeScript)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) with a premium Glassmorphism and Dark Mode design system.
+- **Backend & Persistence**:
+  - **Firebase Auth**: Real-time authentication with role-based session management.
+  - **Cloud Firestore**: Scalable NoSQL database (Primary profile store).
+  - **LocalStorage**: High-speed secondary cache for profile data and session states.
+- **AI Intelligence Layer**:
+  - **Google Gemini 1.5 Flash**: Powering (1) Match Score explanations, (2) Multi-step onboarding validation, and (3) Automated session summarization.
+- **Communication Infrastructure**:
+  - **Web Speech API**: Browser-native voice recognition for students.
+  - **Twilio API**: SMS/WhatsApp nudges for low-bandwidth re-engagement.
+  - **Resend API**: Professional email automation for scheduling and alerts.
+
+---
+
+## 💎 Features & Deep-Dive Logic
+
+### 1. 🎙️ Voice-AI & Session Summarization
+- **Voice Recognition**: A custom `VoiceInput` component in `src/components/VoiceInput.tsx` uses the Web Speech API. It handles common errors (like "aborted") by resetting recognition between turns.
+- **AI Summaries**: Uses a custom Gemini prompt to extract core learning points from mentoring session transcripts.
+  - **Input**: Raw text/voice log.
+  - **Output**: A single, high-impact paragraph of student progress and action items.
+
+### 2. 👥 Peer-to-Peer (P2P) Tutoring System
+- **Tutoring Eligibility**: A background engine identifies high-performing mentees.
+  - **Threshold**: Mentees with an **85% average score** or higher across all tests.
+  - **Visuals**: Circular SVG progress rings (`src/app/peer-to-peer/page.tsx`) and 3-column score grids.
+- **Connection Logic**: Mentees can "Request Connection" to Peer Tutors. This links directly to the `/chat` interface where Peers are tagged with a unique "Peer Tutor" badge.
+
+### 📝 3. Production Onboarding & Redirect System
+- **Onboarding Wizard (`/onboarding`)**: A mandatory 4-step form (Personal → Skills → Preferences → Review).
+- **Gatekeeper Flow**: The `AuthContext.tsx` login logic intercepts all authenticated users.
+  - **Logic**: After login, the system automatically checks **Cloud Firestore** for a profile document (`profiles/{uid}`).
+  - **Logic**: If found, the profile is cached to `localStorage` and the user is redirected to the correct role dashboard (`/dashboard/mentor` or `/dashboard/mentee`).
+  - **Logic**: If NO profile is found in Firestore, the user is forced to `/onboarding`.
+  - **Auto-Guard**: The `/onboarding` page includes a `useEffect` guard that auto-skips to the dashboard if a completed profile already exists in Firestore.
+
+### 📊 4. The 65-Record Mentorship Dataset
+- **Central Data Store**: Located in `src/utils/dataset.ts`.
+- **Composition**:
+  - **50 Mentees**: Complete with Name, Age, Location, Skills, and Goals. Used to populate leaderboards and dashboards.
+  - **15 Mentors**: Experienced professionals matched with students via skills and language.
+- **Dynamic Leaderboard**: Rank #3 is systematically overwritten with the *current user's* real profile name for a personalized competitive experience.
+
+### 💬 5. Language Bridge & Unified Chat
+- **Real-time Translation**: Integrated `TranslationService` using the Google Translate engine.
+- **Language Defaulting**: The chat automatically reads `profile.preferredLanguage` and sets the "Translate to" target (e.g., Malayalam, Tamil, Hindi) from step 1.
+
+### 🧠 6. AI-Driven Mentor Matching System
+- **The Engine (`src/services/matchingService.ts`)**: A high-performance hybrid algorithm that ranks all 15 dataset mentors against the user's real profile.
+- **Deterministic Scoring Formula**:
+  - **Skills Match (40%)**: Calculated as `(Intersection / Mentee_Skills_Length)`.
+  - **Language Match (20%)**: Boolean match (100% or 0%).
+  - **Location Match (20%)**: Boolean match (100% or 0%).
+  - **Availability Match (20%)**: Boolean match (100% or 0%).
+- **AI Insights (`src/lib/gemini.ts`)**: Personalized 2-sentence explanations generated by **Gemini 1.5 Flash** (with a smart deterministic fallback for missing API keys).
+- **Selection Flow (`/matching`)**:
+  - Displays only the **Top 3** most compatible mentors as premium cards with medal badges (🥇🥈🥉).
+  - **Persistence**: Upon confirming a choice, the mentor's full profile is saved into the user's Firestore document under `selectedMentor`.
+  - **Dashboard Integration**: The mentee dashboard reads `selectedMentor` from Firestore and displays them in the "Your Mentor" section, providing immediate access to their chat and scheduling.
+
+---
+
+## 📂 Project Structure Map
+- `/src/app/chat`: Unified chat interface with translation support.
+- `/src/app/onboarding`: The 4-step mandatory profile setup wizard.
+- `/src/app/matching`: The AI-driven Top 3 mentor selection engine.
+- `/src/app/peer-to-peer`: P2P tutor marketplace and eligibility visuals.
+- `/src/context`: `AuthContext` (Firebase), `ProfileContext` (Firestore), `ScheduleContext` (Booking).
+- `/src/utils`: `dataset.ts` (65-record CSV data), `mockData.ts` (legacy demo data).
+- `/src/lib`: `firebase.ts` (Initializes SDK), `gemini.ts` (AI prompts).
+
+---
+
+## 🚀 Active Local Links
+- **[Onboarding Wizard](http://localhost:3000/onboarding)** — Mandatory for new users.
+- **[AI Mentor Matchmaker](http://localhost:3000/matching)** — Top 3 AI-ranked mentor selection.
+- **[Peer-to-Peer Portal](http://localhost:3000/peer-to-peer)** — Database-driven tutor matching.
+- **[Global Leaderboard](http://localhost:3000/leaderboard)** — Real-time mentee rankings.
+- **[Unified Dashboard](http://localhost:3000/dashboard/mentee)** — Shows your selected mentor and daily tracking.
+
+---
+*Last Updated: 2026-03-26*
+*Current Version: v2.5 (AI-Driven Matching & Selection Persistence)*

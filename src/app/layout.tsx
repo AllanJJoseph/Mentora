@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ClientProvider from "@/components/ClientProvider";
+import { ScheduleProvider } from "@/context/ScheduleContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,9 +15,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">
+      <body className="antialiased bg-gray-50 dark:bg-gray-900 transition-colors">
         <ClientProvider>
-          {children}
+          <ScheduleProvider>
+            {children}
+          </ScheduleProvider>
         </ClientProvider>
       </body>
     </html>

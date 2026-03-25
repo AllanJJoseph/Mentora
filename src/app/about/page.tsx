@@ -97,7 +97,7 @@ export default function About() {
               Get Started
             </a>
             <a
-              href="/matching-demo"
+              href="/matching"
               className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-full font-bold text-lg hover:bg-white/10 transition-all"
             >
               View Demo

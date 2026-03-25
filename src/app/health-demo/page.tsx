@@ -2,7 +2,7 @@
 
 import Navbar from "@/components/Navbar";
 import HealthBadge from "@/components/HealthBadge";
-import { MOCK_MATCHES, MOCK_MENTORS } from "@/utils/mockData";
+import { MOCK_MATCHES, MOCK_MENTORS, MOCK_MENTEES } from "@/utils/mockData";
 
 export default function HealthDemo() {
   return (
@@ -20,11 +20,12 @@ export default function HealthDemo() {
         <div className="grid gap-12">
           {MOCK_MATCHES.map((match, i) => {
             const mentor = MOCK_MENTORS.find(m => m.uid === match.mentorId)!;
+            const mentee = MOCK_MENTEES.find(m => m.uid === match.menteeId);
             return (
               <div key={i} className="group p-8 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-xl hover:bg-white/10 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                 <div className="flex-1">
                   <span className="text-indigo-400 text-sm font-bold tracking-widest uppercase mb-2 block">Match Overview</span>
-                  <h3 className="text-2xl font-black text-white mb-2">{mentor.displayName} × Allan Joe</h3>
+                  <h3 className="text-2xl font-black text-white mb-2">{mentor.displayName} × {mentee?.displayName || "Mentee"}</h3>
                   <p className="text-white/40 text-sm mb-4">Established {new Date(match.createdAt).toLocaleDateString()}</p>
                   
                   <div className="grid grid-cols-2 gap-4">
