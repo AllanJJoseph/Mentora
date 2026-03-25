@@ -22,7 +22,16 @@ export class SessionService {
     `;
 
     const result = await generateGeminiContent(prompt);
-    
+
+    if (!result) {
+      return {
+        matchId,
+        date: new Date(),
+        summary: notes,
+        actionItems: [],
+      };
+    }
+
     try {
       // Small cleanup to ensure it's valid JSON if Gemini adds markdown backticks
       const jsonContent = result.replace(/```json|```/g, '').trim();
