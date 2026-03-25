@@ -1,0 +1,28 @@
+# Mentora Task List
+
+- [x] Project Initialization
+    - [x] Analyze PRD and extract requirements
+    - [x] Create foundational documentation
+    - [x] Set up Next.js project
+- [x] Core Architecture Setup
+    - [x] Initialize Firebase (Auth, Firestore, Cloud Functions)
+    - [x] Configure Gemini API integration
+    - [x] Set up design system (TailwindCSS/Shadcn UI or similar)
+- [x] Feature: AI Smart Matching Engine
+    - [x] Define user profile schema
+    - [x] Implement scoring logic (deterministic)
+    - [x] Integrate Gemini API for explanation generation
+- [x] Feature: Engagement Health Tracker
+    - [x] Define engagement metrics and scoring
+    - [x] Implement background jobs for health tracking
+- [x] Feature: AI Session Assistant
+    - [x] Implement session note/voice entry
+    - [x] Integrate Gemini API for summarization and action items
+- [x] Feature: Leaderboard & Gamification
+    - [x] Implement ranking logic for mentors/mentees
+    - [x] Design and implement badge/streak system
+- [x] Admin Dashboard
+    - [x] Build visualization for engagement and matching metrics
+- [x] Final Polish & Deployment
+    - [x] Multilingual support (LibreTranslate/Google Translate)
+    - [x] Completed UI Integration & Dashboard Hub
